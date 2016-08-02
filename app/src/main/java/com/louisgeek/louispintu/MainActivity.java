@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.GridLayout;
@@ -85,6 +86,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         // return super.onTouchEvent(event);
         return mGestureDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //
+        mGestureDetector.onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     private void initTxtData() {
@@ -194,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmapBigImage = bitmapDrawable.getBitmap();
         int childImage_w_h = bitmapBigImage.getWidth() / w_count;
 
+
+       // int  screemWithd=getWindowManager().getDefaultDisplay().getWidth();
+
+        int screemW=getResources().getDisplayMetrics().widthPixels;
         /**
          *初始化图片
          */
@@ -205,6 +217,11 @@ public class MainActivity extends AppCompatActivity {
                 ImageView childImageView = new ImageView(this);
                 childImageView.setPadding(1, 1, 1, 1);
                 childImageView.setImageBitmap(childImageBm);
+               /* ViewGroup.LayoutParams childImageView_lp=childImageView.getLayoutParams();
+                childImageView_lp.width=screemW/w_count;
+                childImageView_lp.height=screemW/w_count;*/
+                ViewGroup.LayoutParams childImageView_lp=new ViewGroup.LayoutParams(screemW/w_count,screemW/w_count);
+                childImageView.setLayoutParams(childImageView_lp);
                 childImageView.setTag(new ImageDataBean(i, j, childImageBm,i,j));
                 childImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -428,21 +445,21 @@ public class MainActivity extends AppCompatActivity {
     
     
     private  void dealIsGameOver(){
-        boolean isGameOver=false;
+        boolean isGameOver=true;
         for (int i = 0; i < w_count; i++) {
             for (int j = 0; j < h_count; j++) {
                 if (mImageViews[i][j]==nowNullImage){
                     continue;
                 }
                ImageDataBean idb= (ImageDataBean) mImageViews[i][j].getTag();
-                if(idb.isRightXY()){
-                    isGameOver=true;
+                if(!idb.isRightXY()){
+                    isGameOver=false;
                     break;
                 }
             }
         }
         if (isGameOver){
-            Toast.makeText(MainActivity.this, "game over", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "恭喜，拼图成功，游戏结束！", Toast.LENGTH_SHORT).show();
         }
     }
 
